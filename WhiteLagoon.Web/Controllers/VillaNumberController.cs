@@ -6,21 +6,21 @@ using WhiteLagoon.Infrastructure.Data;  //veri tabani icin
 //villa detaylarını goruntuleme , silme , guncelleme islemleri icin olusturulan controller dir.
 namespace WhiteLagoon.Web.Controllers
 {
-    public class VillaController : Controller
+    public class VillaNumberController : Controller
     {
-        //veritabani baglami icin _db adinda nesne olusturulmus. bu nesne vt islemlerini gerceklestirecek.
+        //veritabani baglami icin _db adinda nesne olusturulmus. bu nesne vt islemlerini gerceklestirecek.. veri tabanını direk biliyor çünkü .web projesine .infrasttructure ı referans verdik.
         private readonly ApplicationDbContext _db;
 
         //contructor icin kisa yol ctor tab tab
-        public VillaController(ApplicationDbContext db)
+        public VillaNumberController(ApplicationDbContext db)
         {
             _db = db;
         }
 
         public IActionResult Index()
         {
-            var villas = _db.Villas.ToList();    //vt de Villas tablosunu cagirdik.
-            return View(villas);
+            var villaNumbers = _db.VillaNumbers.ToList();    //vt de VillaNumbers tablosunu cagirdik.
+            return View(villaNumbers);
         }
 
         //villa olusturma kismi - get kismi
@@ -32,21 +32,15 @@ namespace WhiteLagoon.Web.Controllers
 
         //post kismi
         [HttpPost]
-        public IActionResult Create(Villa obj)
+        public IActionResult Create(VillaNumber obj)
         {
-            //isim ve aciklama ayni olamaz kismini donduruyor - ozel dogrulama kismi
-            if(obj.Name == obj.Description)
-            {
-                //hata iletisi belirli bir ozellik icin eklenirse , sadece o ozellikte gecerli olur.name gibi
-                ModelState.AddModelError("name", "isim ve aciklama eslesemez.");
-            }
-
-
+            //villa yi mdoelden kaldirdik. yani bu model dogrulanirken Villa ozelligine bakilmadan dogrulanacak.
+            //ModelState.Remove("Villa");
             //modelin gecerli olup olmadigini kontrol ediyor. yani giris kisimlarini propler ile kotnrol edip sikinti yoksa if e girdiyor.
             if (ModelState.IsValid) { 
-                _db.Villas.Add(obj);
+                _db.VillaNumbers.Add(obj);
                 _db.SaveChanges();
-                TempData["success"] = "The villa has been created successfully.";
+                TempData["success"] = "The Villa Number has been created successfully.";
                 //villa controllerini icindeki index e git dedik
                 return RedirectToAction("Index");
             }

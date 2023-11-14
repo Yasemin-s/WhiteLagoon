@@ -1,10 +1,10 @@
-﻿@model VillaNumberVM 
+﻿@model VillaNumberVM
 
 <div class="w-100 card border-0 p-4">
     <div class="card-header bg-success bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Create Villa Number</h2>
+                <h2 class="text-white py-2">Update Villa Number</h2>
             </div>
         </div>
     </div>
@@ -12,33 +12,27 @@
         @* post islemidir *@
         <form method="post" class="row">
             <div class="p-3">
-                @* dogrulama özeti kullanimi, name ve description ayni olamaz kismi icin - komple aa mesajlarini en usttte gostermeye yariyor. *@
-                @* <div asp-validation-summary="All"></div> *@
                 <div class="form-floating py-2 col-12">
-                    @* verileri dinamik olarak ekranda gostermmek *@
                     <select asp-for="@Model.VillaNumber.VillaId" asp-items="@Model.VillaList"
                             class="form-select border shadow">
                     </select>
                     <label asp-for="@Model.VillaNumber.VillaId" class="ms-2"></label>
-                    @* hata mesaji gosterme kismi*@
                     <span asp-validation-for="@Model.VillaNumber.VillaId" class="text-danger"></span>
                 </div>
                 <div class="form-floating py-2 col-12">
-                    @* etiket yardimcisi baglamayi otomatik yapar.  *@
-                    <input asp-for="VillaNumber.Villa_Number" class="form-control border shadow" />
+                    <input asp-for="VillaNumber.Villa_Number" disabled class="form-control border shadow" />
                     <label asp-for="VillaNumber.Villa_Number" class="ms-2"></label>
                     <span asp-validation-for="VillaNumber.Villa_Number" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-12">
-                    @* etiket yardimcisi baglamayi otomatik yapar.  *@
+                <div class="form-floating py-1 col-12">
                     <input asp-for="VillaNumber.SpecialDetails" class="form-control border shadow" />
                     <label asp-for="VillaNumber.SpecialDetails" class="ms-2"></label>
                     <span asp-validation-for="VillaNumber.SpecialDetails" class="text-danger"></span>
                 </div>
-               <div class="row pt-2">
+                <div class="row pt-2">
                     <div class="col-6 col-md-3">
                         <button type="submit" class="btn btn-success w-100">
-                            <i class="bi bi-check-circle"></i> Create
+                            <i class="bi bi-check-circle"></i> Update
                         </button>
                     </div>
                     <div class="col-6 col-md-3">

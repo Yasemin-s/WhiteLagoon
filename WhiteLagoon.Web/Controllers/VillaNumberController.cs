@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using WhiteLagoon.Domain.Entities;
-using WhiteLagoon.Infrastructure.Data;  //veri tabani icin
+using WhiteLagoon.Infrastructure.Data;
+using WhiteLagoon.Web.ViewModels;  //veri tabani icin
 
 //villa detaylarını goruntuleme , silme , guncelleme islemleri icin olusturulan controller dir.
 namespace WhiteLagoon.Web.Controllers
@@ -19,46 +22,83 @@ namespace WhiteLagoon.Web.Controllers
 
         public IActionResult Index()
         {
-            var villaNumbers = _db.VillaNumbers.ToList();    //vt de VillaNumbers tablosunu cagirdik.
-            return View(villaNumbers);
+            var villaNumbers = _db.VillaNumbers.Include(u=>u.Villa).ToList();   
+            return View(villaNumbers);  //gorunume git dersen, 3 tane seyin donduruldugunu gorursun.
         }
 
         //villa olusturma kismi - get kismi
         public IActionResult Create()
         {
-            return View();
+
+            ////villa numaralarini listeletmek icin
+            //IEnumerable<SelectListItem> list = _db.Villas.ToList().Select(u => new SelectListItem{ 
+            //    Text = u.Name,
+            //    Value = u.Id.ToString()
+            //});
+            ////dinamik yapi oldugu icin view bag kullanildi
+            //ViewBag.VillaList = list;
+            VillaNumberVM villaNumberVM = new()
+            {
+                VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                })
+            };
+            return View(villaNumberVM);
 
         }
 
         //post kismi
         [HttpPost]
-        public IActionResult Create(VillaNumber obj)
+        public IActionResult Create(VillaNumberVM obj)
         {
-            //villa yi mdoelden kaldirdik. yani bu model dogrulanirken Villa ozelligine bakilmadan dogrulanacak.
-            //ModelState.Remove("Villa");
-            //modelin gecerli olup olmadigini kontrol ediyor. yani giris kisimlarini propler ile kotnrol edip sikinti yoksa if e girdiyor.
-            if (ModelState.IsValid) { 
-                _db.VillaNumbers.Add(obj);
+            //oda numarasi kontrolu yapir.
+            bool roomNumberExists = _db.VillaNumbers.Any(u => u.Villa_Number == obj.VillaNumber.Villa_Number);
+
+           if (ModelState.IsValid && !roomNumberExists) 
+            { 
+                _db.VillaNumbers.Add(obj.VillaNumber);
                 _db.SaveChanges();
                 TempData["success"] = "The Villa Number has been created successfully.";
-                //villa controllerini icindeki index e git dedik
                 return RedirectToAction("Index");
             }
+            if (roomNumberExists)
+            {
+                TempData["error"] = "The villa Number already exists.";
+            }
+            //dropdown menuyu tekrar doldurmayi sagliyor
+            obj.VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
              return View(obj); 
+
         }
 
         //id ye gore guncelleme yailacak
-        public IActionResult Update(int villaId)
+        public IActionResult Update(VillaNumberVM villaNumberVM)
         {
-            Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);   //tek 1 kayıt almak gerektiginde kullanilabilr
-            //var Villalist = _db.Villas.ToList();    listeyle calisilmasi gerekiyorsa kullanlabilir.
-            //var Villalist = _db.Villas.Where(u => u.Price > 50);    filtreleme yapilmak istenirse
-            //var Villalist = _db.Villas.Where(u => u.Price > 50 && u.Occupancy > 0).FirstOrDefault();    filtreleme yapilmak istenirse
-            //var Villalist = _db.Villas.Find(villaId);
-            if (obj == null)
+            bool roomNumberExists = _db.VillaNumbers.Any(u => u.Villa_Number == obj.VillaNumber.Villa_Number);
+
+            if (ModelState.IsValid && !roomNumberExists)
             {
-                return RedirectToAction("Error","Home");
+                _db.VillaNumbers.Add(obj.VillaNumber);
+                _db.SaveChanges();
+                TempData["success"] = "The Villa Number has been created successfully.";
+                return RedirectToAction("Index");
             }
+            if (roomNumberExists)
+            {
+                TempData["error"] = "The villa Number already exists.";
+            }
+            //dropdown menuyu tekrar doldurmayi sagliyor
+            obj.VillaList = _db.Villas.ToList().Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
             return View(obj);
         }
 
@@ -67,7 +107,6 @@ namespace WhiteLagoon.Web.Controllers
         [HttpPost]
         public IActionResult Update(Villa obj)
         {
-            //web sayfasindaki form verilerinin , modelle eslesip eslesmemesinin ontrol ediyor.
             if (ModelState.IsValid && obj.Id > 0)
             {
                 _db.Villas.Update(obj);
@@ -81,8 +120,7 @@ namespace WhiteLagoon.Web.Controllers
         //silme kismi
         public IActionResult Delete(int villaId)
         {
-            Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);   
-            //null ile calisirken is/is not kullanması tavsiye edilir == yeine
+            Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);  
             if (obj is null)
             {
                 return RedirectToAction("Error", "Home");
@@ -99,7 +137,6 @@ namespace WhiteLagoon.Web.Controllers
             {
                 _db.Villas.Remove(objFromDb);
                 _db.SaveChanges();
-                //gecici verinin anahtar kelimesi ile degerini gonderdik. bu ekranda bildirim gosterecek. anatar kelimeler ayni olamlidir.
                 TempData["success"] = "The villa has been deleted successfully.";
                 return RedirectToAction("Index");
             }

@@ -48,7 +48,7 @@ namespace WhiteLagoon.Web.Controllers
                 _db.SaveChanges();
                 TempData["success"] = "The villa has been created successfully.";
                 //villa controllerini icindeki index e git dedik
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
              return View(obj); 
         }
@@ -79,7 +79,7 @@ namespace WhiteLagoon.Web.Controllers
                 _db.Villas.Update(obj);
                 _db.SaveChanges();
                 TempData["success"] = "The villa has been updated successfully";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             return View(obj);
         }
@@ -87,7 +87,7 @@ namespace WhiteLagoon.Web.Controllers
         //silme kismi
         public IActionResult Delete(int villaId)
         {
-            Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);   
+            Villa? obj = _db.Villas.FirstOrDefault(u => u.Id == villaId);   //Villa? diyerek, atanan değer ya Villa türündedir ya da null dur dedik.
             //null ile calisirken is/is not kullanması tavsiye edilir == yeine
             if (obj is null)
             {
@@ -105,9 +105,8 @@ namespace WhiteLagoon.Web.Controllers
             {
                 _db.Villas.Remove(objFromDb);
                 _db.SaveChanges();
-                //gecici verinin anahtar kelimesi ile degerini gonderdik. bu ekranda bildirim gosterecek. anatar kelimeler ayni olamlidir.
                 TempData["success"] = "The villa has been deleted successfully.";
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             TempData["error"] = "The villa could not be deleted.";
             return View(obj);

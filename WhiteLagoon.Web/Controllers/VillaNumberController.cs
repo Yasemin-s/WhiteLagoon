@@ -58,7 +58,7 @@ namespace WhiteLagoon.Web.Controllers
 
            if (ModelState.IsValid && !roomNumberExists) 
             { 
-                _db.VillaNumbers.Add(obj.VillaNumber);
+                _db.VillaNumbers.Add(obj.VillaNumber);  //artik _db.Add() seklinde kullanabiirin, aldigi nesneye gore referans alacak.
                 _db.SaveChanges();
                 TempData["success"] = "The Villa Number has been created successfully.";
                 return RedirectToAction(nameof(Index));

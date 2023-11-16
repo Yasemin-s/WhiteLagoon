@@ -10,17 +10,16 @@ namespace WhiteLagoon.Web.Controllers
     public class VillaController : Controller
     {
         //veritabani baglami icin _db adinda nesne olusturulmus. bu nesne vt islemlerini gerceklestirecek.
-        private readonly IVillaRepository _villaRepo;
-
+        private readonly IUnitOfWork _unitOfWork;
         //contructor icin kisa yol ctor tab tab
-        public VillaController(IVillaRepository villaRepo)
+        public VillaController(IUnitOfWork unitOfWork)
         {
-            _villaRepo = villaRepo;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            var villas = _villaRepo.GetAll();    //vt de Villas tablosunu cagirdik.
+            var villas = _unitOfWork.Villa.GetAll();    //vt de Villas tablosunu cagirdik.
             return View(villas);
         }
 
@@ -44,9 +43,8 @@ namespace WhiteLagoon.Web.Controllers
 
 
             //modelin gecerli olup olmadigini kontrol ediyor. yani giris kisimlarini propler ile kotnrol edip sikinti yoksa if e girdiyor.
-            if (ModelState.IsValid) { 
-                _villaRepo.Add(obj);
-                _villaRepo.Save();
+            if (ModelState.IsValid) {
+                _unitOfWork.Villa.Add(obj);
                 TempData["success"] = "The villa has been created successfully.";
                 //villa controllerini icindeki index e git dedik
                 return RedirectToAction(nameof(Index));
@@ -57,7 +55,7 @@ namespace WhiteLagoon.Web.Controllers
         //id ye gore guncelleme yailacak
         public IActionResult Update(int villaId)
         {
-            Villa? obj = _villaRepo.Get(u => u.Id == villaId);   //tek 1 kayıt almak gerektiginde kullanilabilr
+            Villa? obj = _unitOfWork.Villa.Get(u => u.Id == villaId);   //tek 1 kayıt almak gerektiginde kullanilabilr
             //var Villalist = _db.Villas.ToList();    listeyle calisilmasi gerekiyorsa kullanlabilir.
             //var Villalist = _db.Villas.Where(u => u.Price > 50);    filtreleme yapilmak istenirse
             //var Villalist = _db.Villas.Where(u => u.Price > 50 && u.Occupancy > 0).FirstOrDefault();    filtreleme yapilmak istenirse
@@ -77,8 +75,7 @@ namespace WhiteLagoon.Web.Controllers
             //web sayfasindaki form verilerinin , modelle eslesip eslesmemesinin ontrol ediyor.
             if (ModelState.IsValid && obj.Id > 0)
             {
-                _villaRepo.Update(obj);
-                _villaRepo.Save();
+                _unitOfWork.Villa.Update(obj);
                 TempData["success"] = "The villa has been updated successfully";
                 return RedirectToAction(nameof(Index));
             }
@@ -88,7 +85,7 @@ namespace WhiteLagoon.Web.Controllers
         //silme kismi
         public IActionResult Delete(int villaId)
         {
-            Villa? obj = _villaRepo.Get(u => u.Id == villaId);   //Villa? diyerek, atanan değer ya Villa türündedir ya da null dur dedik.
+            Villa? obj = _unitOfWork.Villa.Get(u => u.Id == villaId);   //Villa? diyerek, atanan değer ya Villa türündedir ya da null dur dedik.
             //null ile calisirken is/is not kullanması tavsiye edilir == yeine
             if (obj is null)
             {
@@ -101,11 +98,10 @@ namespace WhiteLagoon.Web.Controllers
         [HttpPost]
         public IActionResult Delete(Villa obj)
         {
-            Villa? objFromDb = _villaRepo.Get(u => u.Id == obj.Id);
+            Villa? objFromDb = _unitOfWork.Villa.Get(u => u.Id == obj.Id);
             if (objFromDb is not null)
             {
-                _villaRepo.Remove(objFromDb);
-                _villaRepo.Save();
+                _unitOfWork.Villa.Remove(objFromDb);
                 TempData["success"] = "The villa has been deleted successfully.";
                 return RedirectToAction(nameof(Index));
             }

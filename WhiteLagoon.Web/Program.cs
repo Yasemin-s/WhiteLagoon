@@ -15,8 +15,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(option =>
 option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //repository icin eklenen service(ana repository ve kullanacak olan sinif). soyut olan IVillaRepository, somut olan VillaRepository  dir.
-builder.Services.AddScoped<IVillaRepository, VillaRepository>();
-    
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 

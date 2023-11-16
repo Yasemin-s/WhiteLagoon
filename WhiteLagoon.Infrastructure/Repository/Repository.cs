@@ -25,6 +25,11 @@ namespace WhiteLagoon.Infrastructure.Repository
             dbSet.Add(entity);
         }
 
+        public bool Any(Expression<Func<T, bool>> filter)
+        {
+            return dbSet.Any(filter);
+        }
+
         public T Get(Expression<Func<T, bool>> filter, string? includeProporties = null)
         {
             IQueryable<T> query = dbSet;
@@ -42,7 +47,10 @@ namespace WhiteLagoon.Infrastructure.Repository
             }
             return query.FirstOrDefault();
         }
-    
+
+        /* Expression,Bu, bir kod parçasını çalıştırmak yerine, bu kod parçasının temsil 
+         * edildiği bir yapıyı elde etmek anlamına gelir. Bu yapılar daha 
+         * sonra derlenebilir ve çalıştırılabilir kod üretmek için kullanılabilir.*/
         public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProporties = null)
         {
             IQueryable<T> query = dbSet;

@@ -10,7 +10,8 @@
     </div>
 <div class="card-body border p-4">
     @* post islemidir *@
-    <form method="post" class="row">
+        @* enctype ksimi, bu şekilde birden fazla veri parçası, dosya ve metin içeren form verileri aynı anda sunucuya iletilir.*@
+        <form method="post" class="row" enctype="multipart/form-data">
         <div class="p-3">
             @* dogrulama özeti kullanimi, name ve description ayni olamaz kismi icin - komple aa mesajlarini en usttte gostermeye yariyor. *@
                 @* <div asp-validation-summary="All"></div> *@
@@ -21,33 +22,34 @@
                 @* hata mesaji gosterme kismi*@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Description" class="form-control border shadow" />
                     <label asp-for="Description" class="ms-2"></label>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Price" class="form-control border shadow" />
                     <label asp-for="Price" class="ms-2"></label>
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Sqft" class="form-control border shadow" />
                     <label asp-for="Sqft" class="ms-2"></label>
                     <span asp-validation-for="Sqft" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Occupancy" class="form-control border shadow" />
                     <label asp-for="Occupancy" class="ms-2"></label>
                     <span asp-validation-for="Occupancy" class="text-danger"></span>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
-                    <input asp-for="ImageUrl" class="form-control border shadow" />
+                    <input asp-for="ImageUrl" hidden class="form-control border shadow" />
+                    <input asp-for="Image"  class="form-control border shadow" />
                     <label asp-for="ImageUrl" class="ms-2"></label>
                     <span asp-validation-for="ImageUrl" class="text-danger"></span>
                 </div>

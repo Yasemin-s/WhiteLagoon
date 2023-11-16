@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System.IO;
 using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;  //veri tabani icin
@@ -11,10 +12,12 @@ namespace WhiteLagoon.Web.Controllers
     {
         //veritabani baglami icin _db adinda nesne olusturulmus. bu nesne vt islemlerini gerceklestirecek.
         private readonly IUnitOfWork _unitOfWork;
-        //contructor icin kisa yol ctor tab tab
-        public VillaController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _webHostEnvironment;   //secilen dosyayi izlemek icin, 
+
+        public VillaController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -44,7 +47,26 @@ namespace WhiteLagoon.Web.Controllers
 
             //modelin gecerli olup olmadigini kontrol ediyor. yani giris kisimlarini propler ile kotnrol edip sikinti yoksa if e girdiyor.
             if (ModelState.IsValid) {
+
+                //secilen dosyanin goruntusu kontrol edilir.
+                if(obj.Image != null)
+                {
+                    string fileName = Guid.NewGuid().ToString()+ Path.GetExtension(obj.Image.FileName);    //. benzersiz tanımlayıcııdır(128 bitlik) tostring ile de dizeyye cevrilmistir guid . Rastgele oluşturulan bu numaralar genellikle tekil kimlikler oluşturmak, nesneleri takip etmek veya öğeleri benzersiz bir şekilde tanımlamak için kullanılır. 
+                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images\VillaImage");    //webroot , root klasoru yolunu verir.
+
+                    //goruntu eklemek icin dosya akisi olusturma
+                    using var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create);
+                    obj.Image.CopyTo(fileStream);
+
+                    obj.ImageUrl = @"\images\VillaImage\" + fileName;
+                }
+                else
+                {
+                    obj.ImageUrl = "http://placehold.co/600x400";   //default kendimiz verdik.
+                }
+
                 _unitOfWork.Villa.Add(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "The villa has been created successfully.";
                 //villa controllerini icindeki index e git dedik
                 return RedirectToAction(nameof(Index));
@@ -75,6 +97,31 @@ namespace WhiteLagoon.Web.Controllers
             //web sayfasindaki form verilerinin , modelle eslesip eslesmemesinin ontrol ediyor.
             if (ModelState.IsValid && obj.Id > 0)
             {
+
+                //resim silme kismi - secilen dosyanin goruntusu kontrol edilir.
+                if (obj.Image != null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(obj.Image.FileName);    //. benzersiz tanımlayıcııdır(128 bitlik) tostring ile de dizeyye cevrilmistir guid . Rastgele oluşturulan bu numaralar genellikle tekil kimlikler oluşturmak, nesneleri takip etmek veya öğeleri benzersiz bir şekilde tanımlamak için kullanılır. 
+                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images\VillaImage");    //webroot , root klasoru yolunu verir.
+
+                    //guncelleme icin dosya secilmizse buraya girer.
+                    if (!string.IsNullOrEmpty(obj.ImageUrl))
+                    {
+                        var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, obj.ImageUrl.TrimStart('\\'));
+
+                        //eski resim var ise bunu sil dedik
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
+                    //goruntu eklemek icin dosya akisi olusturma
+                    using var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create);
+                    obj.Image.CopyTo(fileStream);
+
+                    obj.ImageUrl = @"\images\VillaImage\" + fileName;
+                }
+
                 _unitOfWork.Villa.Update(obj);
                 TempData["success"] = "The villa has been updated successfully";
                 return RedirectToAction(nameof(Index));

@@ -13,35 +13,36 @@
         @* post islemidir *@
         <form method="post" class="row">
             <input asp-for="Id" hidden />   @* //form gonderildiginde id de gonderilecek *@
+            <div class="col-10">
             <div class="p-3">
                 @* dogrulama özeti kullanimi, name ve description ayni olamaz kismi icin - komple aa mesajlarini en usttte gostermeye yariyor. *@
                 @* <div asp-validation-summary="All"></div> *@
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar. html etiketi olusturulup bu etiket belirtilen model ozelligine baglanir  *@
                     <input asp-for="Name" disabled class="form-control border shadow" />
                     <label asp-for="Name" class="ms-2"></label>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Description" disabled class="form-control border shadow" />
                     <label asp-for="Description" class="ms-2"></label>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Price" disabled class="form-control border shadow" />
                     <label asp-for="Price" class="ms-2"></label>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Sqft" disabled class="form-control border shadow" />
                     <label asp-for="Sqft" class="ms-2"></label>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="Occupancy" disabled class="form-control border shadow" />
                     <label asp-for="Occupancy" class="ms-2"></label>
                 </div>
-                <div class="form-floating py-2 col-12">
+                <div class="form-floating py-1 col-12">
                     @* etiket yardimcisi baglamayi otomatik yapar.  *@
                     <input asp-for="ImageUrl" disabled class="form-control border shadow" />
                     <label asp-for="ImageUrl" class="ms-2"></label>
@@ -60,7 +61,13 @@
                     </div>
                 </div>
 
+                </div>
             </div>
+            <div class="col-2">
+                <img src="@Model.ImageUrl" width="100%"
+                     style="border-radius:5px; border:1px solid #bbb9b9" />
+            </div>
+
         </form>
     </div>
 

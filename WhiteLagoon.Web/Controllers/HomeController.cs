@@ -17,11 +17,13 @@ namespace WhiteLagoon.Web.Controllers
 
         public IActionResult Index()
         {
-            HomeVm homeVM = new()
+            //ana sayyfada bu gorunuyor. HomeVM in index i
+            HomeVM homeVM = new()
             {
                 VillaList = _unitOfWork.Villa.GetAll(includeProporties: "VillaAmenity"), //villalarin listelenmesi icin
                 Nights = 1,    //default olarak 1 gece olsun dedik.
                 CheckInDate = DateOnly.FromDateTime(DateTime.Now),
+
 
             };
             return View(homeVM);

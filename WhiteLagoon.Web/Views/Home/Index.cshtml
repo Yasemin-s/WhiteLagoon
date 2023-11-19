@@ -71,7 +71,7 @@
                             <div class="d-flex justify-content-between">
                                 <p class="card-title text-warning" style="font-size:xx-large">@villa.Name</p>
                                 <div class="pt-2">
-                                    <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target='#exampleModal-@(11)'>
+                                    <button type="button" class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target='#exampleModal-@(villa.Id) '>
                                         Details
                                     </button>
                                 </div>
@@ -105,7 +105,7 @@
                 </div>
 
                 @* //listenin dinamik olarak goruntulenebilmesi icin ornek model olusturuldu. *@
-                <div class="modal fade" id="exampleModal-@(11)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="exampleModal-@(villa.Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl" style="border: 1px solid #aaa; border-radius:7px;">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -113,7 +113,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body m-0">
-                                Villa DETAILS
+                                @* //villa detaylari kismi *@
+                                <partial name="_VillaDetail" model="@villa"></partial>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>

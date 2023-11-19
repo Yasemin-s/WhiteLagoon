@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;    //identitydbcontext icin gereklidir.
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,18 @@ using WhiteLagoon.Domain.Entities;
 namespace WhiteLagoon.Infrastructure.Data
 {
     //dbcontext ile genislettik
-    public class ApplicationDbContext : DbContext
+
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        /*
+         ApplicationUser ise, genellikle IdentityUser sınıfından türetilen ve 
+        uygulamanız için özelleştirilmiş bir kullanıcı sınıfını temsil eder. 
+        Bu sınıf, kullanıcı için gerekli olan ek alanları veya özellikleri 
+        tanımlamak için genişletilebilir
+         */
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         { 
+
         }
 
         //siniflarin , sunucu da tablo olmasi icin gerekli kod
@@ -20,11 +29,13 @@ namespace WhiteLagoon.Infrastructure.Data
         public DbSet<Villa> Villas { get; set; }
         public DbSet<VillaNumber> VillaNumbers { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; } //uyygulama kullanicilari icin
 
         //model olusturma - tablolara kayit ekledik.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); //ASP.NET Core Identity bileşenlerinin gereksinimlerini de karşılar. Örneğin, kullanıcılar, roller, oturumlar gibi kimlik yönetimi bileşenleri için gerekli veritabanı tablolarını oluşturur.
+
             modelBuilder.Entity<Villa>().HasData(
             new Villa
             {

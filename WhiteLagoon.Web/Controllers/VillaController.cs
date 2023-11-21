@@ -123,6 +123,7 @@ namespace WhiteLagoon.Web.Controllers
                 }
 
                 _unitOfWork.Villa.Update(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "The villa has been updated successfully";
                 return RedirectToAction(nameof(Index));
             }

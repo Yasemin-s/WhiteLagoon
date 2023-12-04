@@ -36,5 +36,9 @@ namespace WhiteLagoon.Domain.Entities
         [ValidateNever]
         public IEnumerable<Amenity> VillaAmenity { get; set; } //amenity de villalari listeletmek icin ihtiyac vardi
 
+        //NotMapped niteliği, bir sınıfın veya özelliklerin veritabanı tablosunda bir alan oluşturulmasını engeller
+        [NotMapped]
+        public bool IsAvailable { get; set; } = true;
+
     }
 }

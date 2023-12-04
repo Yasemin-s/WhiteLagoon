@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System.IO;
 using WhiteLagoon.Application.Common.Interfaces;
@@ -8,6 +9,7 @@ using WhiteLagoon.Infrastructure.Data;  //veri tabani icin
 //villa detaylarını goruntuleme , silme , guncelleme islemleri icin olusturulan controller dir.
 namespace WhiteLagoon.Web.Controllers
 {
+    [Authorize]
     public class VillaController : Controller
     {
         //veritabani baglami icin _db adinda nesne olusturulmus. bu nesne vt islemlerini gerceklestirecek.

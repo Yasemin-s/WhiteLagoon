@@ -29,6 +29,7 @@ namespace WhiteLagoon.Web.Controllers
             _signInManager = signInManager;
         }
 
+        [HttpGet]
         public IActionResult Login(string returnUrl=null)
         {
             returnUrl ??= Url.Content("~/");    //donus url bos degilse icerigi doldur dedik.
@@ -40,8 +41,36 @@ namespace WhiteLagoon.Web.Controllers
 
             return View(loginVM);
         }
-        public IActionResult Register()
+
+
+        //cikis yapma islemi asenkron yapidair ve task kullanilir.
+        /*
+        SignOutAsync() metodu genellikle dış kaynaklara (örneğin, 
+        veritabanı işlemleri veya harici kimlik doğrulama servisleri
+        gibi) erişim gerektirebilir ve bu erişim süresi değişkenlik 
+        gösterebilir. Asenkron yapı, bu tür işlemleri beklerken 
+        uygulamanın diğer istemcilere hizmet etmeye devam etmesini 
+        sağlar. Eğer bu işlemler senkron olarak gerçekleştirilseydi,
+        uygulama bu işlemi beklerken diğer istemcilere hizmet 
+        veremezdi ve performansı düşebilirdi.
+         */
+        public async Task<IActionResult> Logout()
         {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index","Home");
+        }
+
+        //kullanici girisinde amenity kisminin gorunmemesi icin, erisim engellendi kismi
+        public IActionResult AccessDenied()
+        {
+            return View();
+;        }
+
+
+        public IActionResult Register(string returnUrl = null)
+        {
+            returnUrl ??= Url.Content("~/");
+
             //kural yoksa olustuacak - rol kotnrolu yapiyor, yoksa ikisini de yarat dedik.
             //SD.role_Admin diyerek, sd sinifindaki admin i kontrol etmek istedigimizi soyledik.
             if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
@@ -57,7 +86,8 @@ namespace WhiteLagoon.Web.Controllers
                 {
                     Text = x.Name,
                     Value = x.Name
-                })
+                }),
+                RedirectUrl = returnUrl
             };
 
             return View(registerVM);
@@ -68,53 +98,56 @@ namespace WhiteLagoon.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM registerVM)
         {
-            
-            ApplicationUser user = new()
-            {
-                Name = registerVM.Name,
-                Email = registerVM.Email,
-                PhoneNumber = registerVM.PhoneNumber,
-                NormalizedEmail = registerVM.Email.ToUpper(),
-                EmailConfirmed = true,
-                UserName = registerVM.Email,
-                CreatedAt = DateTime.Now    //hesabin ne zaman olsuturuldugu bilgisini tasir.
-            };
+  
+            if(ModelState.IsValid)
+            {           
+                ApplicationUser user = new()
+                {
+                    Name = registerVM.Name,
+                    Email = registerVM.Email,
+                    PhoneNumber = registerVM.PhoneNumber,
+                    NormalizedEmail = registerVM.Email.ToUpper(),
+                    EmailConfirmed = true,
+                    UserName = registerVM.Email,
+                    CreatedAt = DateTime.Now    //hesabin ne zaman olsuturuldugu bilgisini tasir.
+                };
 
-            //ef yyerine, yardimci metot kullandil.
-            var result = await _userManager.CreateAsync(user, registerVM.Password);
-            
-            //kullanıcı olusturma basarili ise
-            if(result.Succeeded)
-            {
-                //rol secimi yapilmissa, secilen rol atanacaktir.
-                if(!string.IsNullOrEmpty(registerVM.Role))
-                {
-                    //kullanicinin secmis oldugu rolu atar
-                    await _userManager.AddToRoleAsync(user, registerVM.Role);
-                }
-                else
-                {
-                    //kullanici rol secmemisse default customer atar
-                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
-                }
-           
+                //ef yyerine, yardimci metot kullandil.
+                var result = await _userManager.CreateAsync(user, registerVM.Password);
 
-                //oturum acma kismi , presistent ise tarayiciyi kapattigi anda oturumu sonlandirir, yani giris icin tekrar bilgi ister.
-                await _signInManager.SignInAsync(user, isPersistent:false);
+                    //kullanıcı olusturma basarili ise
+                    if (result.Succeeded)
+                    {
+                        //rol secimi yapilmissa, secilen rol atanacaktir.
+                        if (!string.IsNullOrEmpty(registerVM.Role))
+                        {
+                            //kullanicinin secmis oldugu rolu atar
+                            await _userManager.AddToRoleAsync(user, registerVM.Role);
+                        }
+                        else
+                        {
+                            //kullanici rol secmemisse default customer atar
+                            await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                        }
 
-                if(string.IsNullOrEmpty(registerVM.RedirectUrl)) 
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    return LocalRedirect(registerVM.RedirectUrl);
-                }
 
-                foreach(var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
+                        //oturum acma kismi , presistent ise tarayiciyi kapattigi anda oturumu sonlandirir, yani giris icin tekrar bilgi ister.
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+
+                        if (string.IsNullOrEmpty(registerVM.RedirectUrl))
+                        {
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            return LocalRedirect(registerVM.RedirectUrl);
+                        }
+                    }
+
+                    foreach(var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
             }
             //registerVM sinifinin RoleList ozelligine rol ekler
             registerVM.RoleList = _roleManager.Roles.Select(x => new SelectListItem
@@ -127,6 +160,7 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         //Login
+        [HttpPost]
         public async Task<IActionResult> Login(LoginVM loginVM)
         {
             if (ModelState.IsValid)

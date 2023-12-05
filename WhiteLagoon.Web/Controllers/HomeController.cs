@@ -41,6 +41,7 @@ namespace WhiteLagoon.Web.Controllers
         //tarih araligina gore villa listesini filtreleyip getiriyor.
         public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
         {
+            Thread.Sleep(2000); //spinner in gosterilmesi icin 2 sn bekletildi.
             var villaList = _unitOfWork.Villa.GetAll(includeProporties: "VillaAmenity").ToList();   //getall vt den tum villalari getirioyr.includeProporties ise, parametre ile iliskili olan villamaenity ozelligini dahhil ediyor.
             foreach (var villa in villaList)
             {

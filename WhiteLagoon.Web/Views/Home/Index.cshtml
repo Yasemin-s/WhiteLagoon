@@ -64,28 +64,35 @@
 </div>
 
 @* kismi gorunum yenilenmesi *@
-@section scripts{
+@section scripts {
     <script>
         //fonksiyon, belirli bir tarih ve gece sayısı bilgisini alarak bir POST tipi AJAX isteği gönderir.
         function fnLoadVillaList() {
-
-            //gonderilecek obje olustturuldu. Bu obje, AJAX isteği ile gönderilecek verileri içerir.
+            $('.spinner').show();   //spinner goster
             var objData = {
                 checkInDate: $("#CheckInDate").val(),   //checkInDate ve nights adında iki özellik bulunur ve bu özellikler, #CheckInDate ve #Nights ID'lerine sahip HTML elemanlarının değerlerini alır.
                 nights: $("#Nights").val()
-            }
+            };
 
             //jQuery'nin AJAX fonksiyonunu kullanarak bir isteği başlatır.
             $.ajax({
-                url: "@Url.Action("GetVillasByDate", "Home")",   // İstek gönderilecek URL'yi belirtir.belirtilen Controller ve Action isimlerine göre bir URL oluşturur.GetVillasByDate action'ına yönlendirilen bir istek gönderir.
-                data: objData, //Gönderilecek verileri belirtir
                 type: "POST",
-                success: function (data) { // İstek başarılı olduğunda çalışacak fonksiyon.
+                data: objData,  //Gönderilecek verileri belirtir
+                url: "@Url.Action("GetVillasByDate", "Home")",  // İstek gönderilecek URL'yi belirtir.belirtilen Controller ve Action isimlerine göre bir URL oluşturur.GetVillasByDate action'ına yönlendirilen bir istek gönderir.
+                success: function (data) {  // İstek başarılı olduğunda çalışacak fonksiyon.
                     $("#VillasList").empty();   // elemanının içeriği .empty() fonksiyonuyla temizlenir
-                    $("#VillasList").html(data); // ve daha sonra gelen veri bu elemanın içine yerleştirilir.
+                    $("#VillasList").html(data);    // ve daha sonra gelen veri bu elemanın içine yerleştirilir.
+                    $('.spinner').hide();   //spinner gizle
+                },
+                failure: function (response) {
+                    $('.spinner').hide();  //spinner gizle
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    $('.spinner').hide();   //spinner gizle
+                    alert(response.responseText);
                 }
             });
         }
-
     </script>
 }

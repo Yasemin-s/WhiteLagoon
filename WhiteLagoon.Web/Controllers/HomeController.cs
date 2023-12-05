@@ -29,16 +29,8 @@ namespace WhiteLagoon.Web.Controllers
             return View(homeVM);
         }
 
-        //metot, villa ogelerindeki id nin tek mi cift mi oldugunu kontrol ediyor.
-        [HttpPost]
-        public IActionResult Index(HomeVM homeVM)
-        {
-            homeVM.VillaList = _unitOfWork.Villa.GetAll(includeProporties: "VillaAmenity"); //villalarin listelenmesi icin
-            return View(homeVM);
-        }
-
-
         //tarih araligina gore villa listesini filtreleyip getiriyor.
+        [HttpPost]
         public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
         {
             Thread.Sleep(2000); //spinner in gosterilmesi icin 2 sn bekletildi.

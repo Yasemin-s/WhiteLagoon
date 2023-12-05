@@ -30,6 +30,8 @@ namespace WhiteLagoon.Infrastructure.Data
         public DbSet<VillaNumber> VillaNumbers { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; } //uyygulama kullanicilari icin
+        public DbSet<Booking> Bookings { get; set; }    //rezerve icin 
+
 
         //model olusturma - tablolara kayit ekledik.
         protected override void OnModelCreating(ModelBuilder modelBuilder)

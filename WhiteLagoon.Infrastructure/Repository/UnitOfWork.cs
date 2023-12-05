@@ -14,6 +14,7 @@ namespace WhiteLagoon.Infrastructure.Repository
         private readonly ApplicationDbContext _db;
         public IVillaRepository Villa {get; private set;}
         public IAmenityRepository Amenity { get; private set; }
+        public IBookingRepository Booking { get; private set; } //Bu özellik, UnitOfWork sınıfının dışındaki kodlarda, Booking ile ilgili veritabanı işlemlerini gerçekleştirmek için kullanılacak olan sınıfın örneğine erişim sağlar
         public IVillaNumberRepository VillaNumber {get; private set;} 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -21,6 +22,7 @@ namespace WhiteLagoon.Infrastructure.Repository
             Villa = new VillaRepository(_db);   //villarepository sinifinin basedb kismina iletilmistir.
             Amenity = new AmenityRepository(_db);   //villarepository sinifinin basedb kismina iletilmistir.
             VillaNumber = new VillaNumberRepository(_db);   //villarepository sinifinin basedb kismina iletilmistir.
+            Booking = new BookingRepository(_db);   
            
         }
         public void Save()

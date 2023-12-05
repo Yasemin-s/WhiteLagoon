@@ -26,11 +26,14 @@
                         <div class="col-12">
                             <div class="row pb-3 pt-2">
                                 <div class="col-4">
-                                        @if (Model.CheckInDate > DateOnly.FromDateTime(DateTime.Now))
+                                @if (Model.CheckInDate > DateOnly.FromDateTime(DateTime.Now))   //Model.CheckInDate özelliğinin şu anki tarihten (DateTime.Now) daha ileri bir tarihe sahip olup olmadığını kontrol ediyor.
                                         {
-                                            if (villa.IsAvailable)
-                                            {
-                                              <a class="btn btn-success form-control btn-block">
+                                            if (villa.IsAvailable)  //villa erisilebilir ise book butonu, erisilemez ise sold out  olusturuluyor
+                                    {   @* disaridan girilen veriler modelin ilgili propertiesleri ile eslestirilip ataniyor *@
+                                              <a asp-controller="Booking" asp-action="FinalizeBooking"
+                                            asp-route-villaId="@villa.Id" asp-route-checkInDate="@Model.CheckInDate" 
+                                           asp-route-nights="@Model.Nights"
+                                              class="btn btn-success form-control btn-block">
                                                  Book
                                               </a>
                                             }

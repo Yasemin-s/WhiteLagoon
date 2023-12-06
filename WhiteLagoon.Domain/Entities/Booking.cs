@@ -51,7 +51,7 @@ namespace WhiteLagoon.Domain.Entities
         public DateTime PaymentDate { get; set; }   //Ödeme tarihini temsil eder
 
         public string? StripeSessionId { get; set; }    //Stripe ödeme işlemi için kullanılan oturum ve işlem kimliklerini temsil eder
-        public string? StripePaymentIntentId { get; set; }  //
+        public string? StripePaymentIntentId { get; set; }  //odeme sonrasi verilen benzersiz kimlik tutulur. 
 
         public DateTime ActualCheckInDate { get; set; } //Gerçekleşen giriş ve çıkış tarihlerini temsil eder
         public DateTime ActualCheckOutDate { get; set; }

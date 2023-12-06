@@ -12,5 +12,12 @@ namespace WhiteLagoon.Application.Common.Utility
         public const string Role_Customer = "Customer";
         public const string Role_Admin = "Admin";
 
+        public const string StatusPending = "Pending";  //vt de kayit olusturup siparisi beklemeye almakicin
+        public const string StatusApproved = "Approved";    //kullanici basarili odeme yaptiginda rezervasyon olusturuldu seklinde olacaktir
+        public const string StatusCheckedIn = "CheckedIn";  //checin yaptiginda durum guncellenecektir.
+        public const string StatusCompleted = "Completed";  //kontrol edildiginde tamamlandi oalcaktir.
+        public const string StatusCancelled = "Cancelled";  //odeme yaparken vazgecip iptal durumu
+        public const string StatusRefunded = "Refunded";    //odeme iade durumu
+
     }
 }
